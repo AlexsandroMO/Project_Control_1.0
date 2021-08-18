@@ -148,8 +148,16 @@ def listaModelDocs(request):
     Projects = Project.objects.all().order_by('-project_name')
     Employees = Employee.objects.all()
     DocumentModels = DocumentModel.objects.all().order_by('-documment_name')
+    Subjects = Subject.objects.all().order_by('-subject_name')
+    LdProjs = LdProj.objects.all()
 
     docs_count = len(DocumentModels)
+
+    '''list_sub, unique = [],[]
+    for a in LdProjs:
+        list_proj.append(a.proj_name)
+        list_docs.append(a.subject_name)
+        list_id.append(a.subject_name_id)'''
 
     colab = request.user
     colaborador = ''
@@ -160,7 +168,7 @@ def listaModelDocs(request):
             colaborador = a.emp_name
             photo_colab = a.photo
 
-    return render(request,'project_control/modelos-de-documentos.html', {'stauts_body':stauts_body, 'Projects':Projects, 'Employees':Employees, 'DocumentModels':DocumentModels, 'docs_count':docs_count, 'colaborador':colaborador, 'photo_colab':photo_colab})
+    return render(request,'project_control/modelos-de-documentos.html', {'stauts_body':stauts_body, 'Projects':Projects, 'Employees':Employees, 'DocumentModels':DocumentModels, 'Subjects':Subjects, 'docs_count':docs_count, 'colaborador':colaborador, 'photo_colab':photo_colab})
 
 
 @login_required
@@ -209,6 +217,52 @@ def listDocs(request, id):
     LdProjs = LdProj.objects.filter(proj_name_id=id_proj)
     Employees = Employee.objects.all()
     Subjects = Subject.objects.all().order_by('-subject_name')
+
+    list_docs, list_id, list_proj, unique = [],[],[],[]
+    for a in LdProjs:
+        list_proj.append(a.proj_name)
+        list_docs.append(a.subject_name)
+        list_id.append(a.subject_name_id)
+
+    unique_list_doc = list(set(list_docs))
+    unique_list_id = list(set(list_id))
+
+    #unique_list = len(np.unique(list_docs))
+    for a in range(0, len(unique_list_doc)):
+        unique.append([unique_list_id[a], unique_list_doc[a]])
+
+    print('>>>>>>', unique_list_id, unique_list_doc)
+ 
+    docs_count = len(unique)
+
+    colab = request.user
+    colaborador = ''
+    photo_colab = ''
+
+    for a in Employees:
+        if colab == a.user:
+            colaborador = a.emp_name
+            photo_colab = a.photo
+
+    return render(request,'project_control/lista-de-documentos.html', {'stauts_body':stauts_body, 'unique':unique,
+                            'list_proj':list_proj, 'Employees':Employees, 'LdProjs':LdProjs, 'docs_count':docs_count, 'id_proj':id_proj, 'colaborador':colaborador, 
+                            'photo_colab':photo_colab})
+
+
+@login_required
+def listDocsCreated(request):
+    stauts_body = ''
+
+    POST = dict(request.POST)
+    print(POST)
+
+    id_proj = int(POST['action-proj'][0])
+    id_sub = int(POST['action-sub'][0])
+
+    Projects = Project.objects.filter(id=id_proj)
+    Subjects = Subject.objects.filter(id=id_sub)
+    LdProjs = LdProj.objects.filter(proj_name_id=id_proj).filter(subject_name_id=id_sub)
+    Employees = Employee.objects.all()
 
     list_docs, list_id, list_proj, unique = [],[],[],[]
     for a in LdProjs:

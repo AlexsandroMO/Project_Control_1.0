@@ -20,19 +20,38 @@
 
       <div class="module" id="changelist">
         <div class="changelist-form-container">
-          <form id="changelist-form" method="post" novalidate>
+          <form action="{% url 'list-doc-screated' %}" method="post" id="changelist-form" novalidate>
             <input type="hidden" name="csrfmiddlewaretoken" value="{{token}}">
             <div class="actions">
               <label>Action:
-                <select name="action" required>
-                  <option value="" selected>---------</option>
-                  <option value="delete_selected">Delete selected document models</option>
-                </select></label><input type="hidden" name="select_across" value="0" class="select-across">
+                <select name="action-proj" required>
+                  <option value="0" selected>---------</option>
+                  {% for item in Projects %}
+                  <option value="{{item.id}}">{{item.project_name}}</option>
+                  {% endfor %}
+                </select></label>
+                <!-- <input type="hidden" name="select_across" value="0" class="select-across"> -->
                 
-              </label><input type="hidden" name="select_across" value="0" class="select-across">
+              </label>
+              <!-- <input type="hidden" name="select_across" value="0" class="select-across"> -->
+              <!-- <button type="submit" class="button" title="Run the selected action" name="index" value="{{proj.id}}">Go</button> -->
+   
+              <label id="action-position"> Action:
+                <select name="action-sub" required>
+                  <option value="0" selected>---------</option>
+                  {% for item in Subjects %}
+                  <option value="{{item.id}}">{{item.subject_name}}</option>
+                  {% endfor %}
+                </select></label>
+                <!-- <input type="hidden" name="select_across" value="0" class="select-across"> -->
+                
+              </label>
+              <!-- <input type="hidden" name="select_across" value="0" class="select-across"> -->
               <button type="submit" class="button" title="Run the selected action" name="index" value="{{proj.id}}">Go</button>
-              <span class="action-counter" data-actions-icnt="{{docs_count}}">{{docs_count}} of 5 selected</span>
+       
             </div>
+<br>
+
             <div class="results">
               <table id="result_list">
                 <thead>
@@ -63,7 +82,7 @@
                   {% csrf_token %}
                   {% for doc in DocumentModels %}
                   <tr>
-                    <td class="action-checkbox"><input type="checkbox" name="_selected_action" value="6"
+                    <td class="action-checkbox"><input type="checkbox" name="_selected_action" value="{{doc.id}}"
                         class="action-select"></td>  <!--nowrap: tirar quebra de texto-->
                     <th class="field-documment_name nowrap"><a href="/admin/project_control/documentmodel/{{doc.id}}/change/">{{doc.documment_name}}</a></th>
                     <td class="field-doc_code nowrap">{{doc.doc_code}}</td>

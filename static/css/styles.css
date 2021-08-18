@@ -3,6 +3,19 @@
   width: auto;
 }
 
+#action-position{
+  padding-left: 10px;
+}
+/* #changelist{
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  float:inline
+} */
+
+
 /*
 .row{
   padding-left: 50px;
